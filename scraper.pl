@@ -30,6 +30,7 @@ sub idsort { sort { $a->{id} <=> $b->{id} } @_; }
 
 my $rsp;
 $SIG{__DIE__} = sub {
+	die @_ if $^S;
 	use Data::Dumper;
 	warn Dumper $rsp;
 };
