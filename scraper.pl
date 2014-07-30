@@ -28,6 +28,13 @@ my @tabs = (
 # Sorting helper, for record-tracking purposes
 sub idsort { sort { $a->{id} <=> $b->{id} } @_; }
 
+my $rsp;
+$SIG{__DIE__} = sub {
+	use Data::Dumper;
+	warn Dumper $rsp;
+};
+
+
 # JSON RPC
 sub call
 {
@@ -44,6 +51,8 @@ sub call
 	my ($response, $response2);
 	do {
 		warn "Retry: Inconsistent response for GET $uri" if $response;
+use Data::Dumper;
+warn Dumper $rsp if $response;
 
 		# First try
 		$uri->query_form ('dojo.preventCache' => $time++, @_);
@@ -52,6 +61,7 @@ sub call
 		# Verify
 		$uri->query_form ('dojo.preventCache' => $time++, @_);
 		$response2 = $ua->get ($uri);
+$rsp = [ $response, $response2 ];
 	} while (length $response->decoded_content != length $response2->decoded_content);
 	die $response->status_line unless $response->is_success;
 
