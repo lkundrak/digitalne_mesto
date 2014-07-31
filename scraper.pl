@@ -52,8 +52,11 @@ sub call
 	my ($response, $response2);
 	do {
 		warn "Retry: Inconsistent response for GET $uri" if $response;
+if ($response) {
 use Data::Dumper;
-warn Dumper $rsp if $response;
+warn Dumper $rsp;
+sleep 1;
+}
 
 		# First try
 		$uri->query_form ('dojo.preventCache' => $time++, @_);
@@ -63,7 +66,7 @@ warn Dumper $rsp if $response;
 		$uri->query_form ('dojo.preventCache' => $time++, @_);
 		$response2 = $ua->get ($uri);
 $rsp = [ $response, $response2 ];
-	} while (length $response->decoded_content != length $response2->decoded_content);
+	} while (length $response->decoded_content != length $response2->decoded_content or length $response->decoded_content < 14);
 	die $response->status_line unless $response->is_success;
 
 	my $content = $response->decoded_content;
