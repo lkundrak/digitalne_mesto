@@ -59,11 +59,11 @@ sleep 1;
 }
 
 		# First try
-		$uri->query_form ('dojo.preventCache' => $time++, @_);
+		$uri->query_form (['dojo.preventCache' => $time++, @_]);
 		$response = $ua->get ($uri);
 
 		# Verify
-		$uri->query_form ('dojo.preventCache' => $time++, @_);
+		$uri->query_form (['dojo.preventCache' => $time++, @_]);
 		$response2 = $ua->get ($uri);
 $rsp = [ $response, $response2 ];
 	} while (length $response->decoded_content != length $response2->decoded_content or length $response->decoded_content < 14);
