@@ -51,12 +51,12 @@ sub call
 	# Backend is known to return incomplete responses from time to time
 	my ($response, $response2);
 	do {
-		warn "Retry: Inconsistent response for GET $uri" if $response;
-if ($response) {
+		if ($response) {
+			warn "Retry: Inconsistent response for GET $uri";
 use Data::Dumper;
 warn Dumper $rsp;
-sleep 1;
-}
+			sleep 1;
+		}
 
 		# First try
 		$uri->query_form (['dojo.preventCache' => $time++]);
