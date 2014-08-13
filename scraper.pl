@@ -78,7 +78,11 @@ $rsp = [ $response, $response2 ];
 		return ();
 	}
 
-	$content =~ s/\t/ /g; # https://rt.cpan.org/Ticket/Display.html?id=97558
+	# https://rt.cpan.org/Ticket/Display.html?id=97558
+	$content =~ s/\t/ /g;
+	# "nazov":"Zmluva na zabezpečenie pozície " supervízora výrob"
+	$content =~ s/"([^{}:,\[]*)"([^{}:,\[]*)"/"$1\\"$2"/g;
+
 	return @{new JSON::XS->utf8->relaxed->decode ($content)->{items}};
 }
 
