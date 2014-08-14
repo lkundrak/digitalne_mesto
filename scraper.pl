@@ -50,7 +50,8 @@ sub call
 
 	# Backend is known to return incomplete responses from time to time
 	my ($response, $response2);
-	do {
+	my $retries = 10;
+	while ($retries--) {
 		if ($response) {
 			warn "Retry: Inconsistent response for GET $uri";
 use Data::Dumper;
@@ -66,8 +67,11 @@ warn Dumper $rsp;
 		$uri->query_form (['dojo.preventCache' => $time++]);
 		$response2 = $ua->get ($uri);
 $rsp = [ $response, $response2 ];
-	} while (length $response->decoded_content != length $response2->decoded_content or length $response->decoded_content < 14);
+		last if length $response->decoded_content == length $response2->decoded_content
+			and length $response->decoded_content > 14;
+	}
 	die $response->status_line unless $response->is_success;
+	warn 'Out of tries' unless $retries;
 
 	my $content = $response->decoded_content;
 
