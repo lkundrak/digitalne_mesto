@@ -79,9 +79,13 @@ $rsp = [ $response, $response2 ];
 	}
 
 	# https://rt.cpan.org/Ticket/Display.html?id=97558
-	$content =~ s/\t/ /g;
+	warn "Bad tabs for GET $uri" if $content =~ s/\t/ /g;
+
 	# "nazov":"Zmluva na zabezpečenie pozície " supervízora výrob"
-	$content =~ s/"([^{}:,\[]*)"([^{}:,\[]*)"/"$1\\"$2"/g;
+	# "nazov":"Dodatok č.2 k Zmluve o dielo "Keltská ul.""
+	while ($content =~ s/"([^{}:,\[\\]*)"([^{}:,\[]*)"/"$1\\"$2"/g) {
+		warn "Bad quoting for GET $uri";
+	};
 
 	return @{new JSON::XS->utf8->relaxed->decode ($content)->{items}};
 }
